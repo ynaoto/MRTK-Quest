@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd `dirname $0`
+cd `dirname $0`/../Assets/
 
 FOLDERS_TO_LINK=(
     MixedRealityToolkit
@@ -14,6 +14,6 @@ FOLDERS_TO_LINK=(
 
 for folder in "${FOLDERS_TO_LINK[@]}"
 do
-ln -s MixedRealityToolkit-Unity/Assets/$folder ../Assets/$folder
-ln -s MixedRealityToolkit-Unity/Assets/$folder.meta ../Assets/$folder.meta
+ln -s ../External/MixedRealityToolkit-Unity/Assets/$folder $folder
+ln -s ../External/MixedRealityToolkit-Unity/Assets/$folder.meta $folder.meta
 done

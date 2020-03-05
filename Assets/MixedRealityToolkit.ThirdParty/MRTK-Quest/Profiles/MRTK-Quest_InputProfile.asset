@@ -71,7 +71,7 @@ MonoBehaviour:
     deviceManagerProfile: {fileID: 0}
   - componentType:
       reference: prvncher.MixedReality.Toolkit.OculusQuestInput.OculusQuestInputManager,
-        prvncher.MixedReality.Toolkit.OculusQuestInput
+        prvncher.MRTKQuest
     componentName: Oculus Quest Input Manager
     priority: 0
     runtimePlatform: 33
@@ -91,7 +91,7 @@ MonoBehaviour:
   speechCommandsProfile: {fileID: 11400000, guid: e8d0393e66374dae9646851a57dc6bc1,
     type: 2}
   enableControllerMapping: 1
-  controllerMappingProfile: {fileID: 11400000, guid: 39ded1fd0711a0c448413d0e1ec4f7f3,
+  controllerMappingProfile: {fileID: 11400000, guid: b375790d2b4152a40bde1c0375af4072,
     type: 2}
   controllerVisualizationProfile: {fileID: 11400000, guid: 345c06fdf3732db46b96299bd3cba653,
     type: 2}

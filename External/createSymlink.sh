@@ -10,6 +10,7 @@ FOLDERS_TO_LINK=(
     MixedRealityToolkit.Examples
     MixedRealityToolkit.Extensions
     MixedRealityToolkit.Tools
+    MRTK
 )
 
 for folder in "${FOLDERS_TO_LINK[@]}"

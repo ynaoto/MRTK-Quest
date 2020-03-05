@@ -1,5 +1,5 @@
 {
-    "name": "prvncher.MixedReality.Toolkit.OculusQuestInput",
+    "name": "prvncher.MRTKQuest",
     "references": [
         "Microsoft.MixedReality.Toolkit",
         "Oculus.VR"

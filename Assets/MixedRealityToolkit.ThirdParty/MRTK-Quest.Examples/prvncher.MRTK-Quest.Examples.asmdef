@@ -1,10 +1,8 @@
 {
     "name": "MRTK-Quest.Examples",
     "references": [
-        "Microsoft.MixedReality.Toolkit",
         "Microsoft.MixedReality.Toolkit.Examples",
-        "prvncher.MRTKQuest",
-        "Oculus.VR"
+        "prvncher.MRTKQuest"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

@@ -11,6 +11,7 @@ set FOLDER_4=MixedRealityToolkit.Providers
 set FOLDER_5=MixedRealityToolkit.Examples
 set FOLDER_6=MixedRealityToolkit.Extensions
 set FOLDER_7=MixedRealityToolkit.Tools
+set FOLDER_8=MRTK
 
 set i=1
 :BEGIN

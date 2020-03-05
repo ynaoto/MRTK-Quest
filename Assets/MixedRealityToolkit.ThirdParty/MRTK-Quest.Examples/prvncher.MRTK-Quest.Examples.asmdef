@@ -1,16 +1,13 @@
 {
-    "name": "prvncher.MixedReality.Toolkit.OculusQuestInput",
+    "name": "MRTK-Quest.Examples",
     "references": [
         "Microsoft.MixedReality.Toolkit",
+        "Microsoft.MixedReality.Toolkit.Examples",
+        "prvncher.MRTKQuest",
         "Oculus.VR"
     ],
     "optionalUnityReferences": [],
-    "includePlatforms": [
-        "Android",
-        "Editor",
-        "WindowsStandalone32",
-        "WindowsStandalone64"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

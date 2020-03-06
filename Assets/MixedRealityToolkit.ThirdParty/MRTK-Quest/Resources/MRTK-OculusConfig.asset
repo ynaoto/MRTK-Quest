@@ -19,5 +19,9 @@ MonoBehaviour:
     type: 3}
   useCustomHandMaterial: 1
   customHandMaterial: {fileID: 2100000, guid: d8b2e8e40e412d04895b57cba8b9650d, type: 2}
+  updateMaterialPinchStrengthValue: 1
+  pinchStrengthMaterialProperty: _PressIntensity
+  _minimumHandConfidence: 0
+  _lowConfidenceTimeThreshold: 0.2
   defaultCpuLevel: 4
   defaultGpuLevel: 4

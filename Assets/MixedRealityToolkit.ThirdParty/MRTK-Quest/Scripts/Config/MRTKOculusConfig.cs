@@ -120,6 +120,44 @@ namespace prvncher.MixedReality.Toolkit.Config
         /// </summary>
         public string PinchStrengthMaterialProperty => pinchStrengthMaterialProperty;
 
+        [Header("Hand Tracking Configuration")]
+        [SerializeField]
+        [Tooltip("Setting this to low means hands will continue to track with low confidence.")]
+        private OVRHand.TrackingConfidence _minimumHandConfidence = OVRHand.TrackingConfidence.Low;
+
+        /// <summary>
+        /// Setting this to low means hands will continue to track with low confidence.
+        /// </summary>
+        public OVRHand.TrackingConfidence MinimumHandConfidence
+        {
+            get => _minimumHandConfidence;
+            set => _minimumHandConfidence = value;
+        }
+
+        /// <summary>
+        /// Current tracking confidence of left hand. Value managed by OculusQuestHand.cs.
+        /// </summary>
+        public OVRHand.TrackingConfidence CurrentLeftHandTrackingConfidence { get; set; }
+        
+        /// <summary>
+        /// Current tracking confidence of right hand. Value managed by OculusQuestHand.cs.
+        /// </summary>
+        public OVRHand.TrackingConfidence CurrentRightHandTrackingConfidence { get; set; }
+
+        [SerializeField]
+        [Range(0f, 5f)]
+        [Tooltip("Time after which low confidence is considered unreliable, and tracking is set to false. Setting this to 0 means low-confidence is always acceptable.")]
+        private float _lowConfidenceTimeThreshold = 0.2f;
+
+        /// <summary>
+        /// Time after which low confidence is considered unreliable, and tracking is set to false.
+        /// </summary>
+        public float LowConfidenceTimeThreshold
+        {
+            get => _lowConfidenceTimeThreshold;
+            set => _lowConfidenceTimeThreshold = value;
+        }
+
         [Header("Performance Configuration")]
         [SerializeField]
         [Tooltip("Default CPU performance level (0-2 is documented), (3-5 is undocumented).")]

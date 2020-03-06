@@ -8,7 +8,7 @@ It was built to showcase the hand-driven interaction model designed by Microsoft
 - Full support for any interaction in the MRTK designed to work for HoloLens 2.
 
 ## Demo Video
-[![Demo video](https://user-images.githubusercontent.com/7420990/75618297-21b59300-5b3a-11ea-8093-365ce3921c15.gif)](https://twitter.com/i/status/1233945007486390273)
+[![Demo video](https://user-images.githubusercontent.com/7420990/75618297-21b59300-5b3a-11ea-8093-365ce3921c15.gif)](https://twitter.com/prvncher/status/1235731976893665280)
 
 # Supported versions
 - Unity 2018.4.x (Currently targetting 2018.4.18f1). Some users have reported success with 2019.3 as well.
@@ -42,7 +42,7 @@ Then clone using this command "git clone --recurse-submodules https://github.com
     and copy your MRTK files to the External folder, before proceeding to step 2.
 
 ### 1b. Develop an existing MRTK application
-Simply [download](https://github.com/provencher/MRTK-Quest/releases/download/v0.5.2/MRTK-Quest_v0.5.2.unitypackage) the MRTK-Quest **.unitypackage** from the latest **[Release page.](https://github.com/provencher/MRTK-Quest/releases)**.
+Simply download the MRTK-Quest **.unitypackage** from the latest **[Release page.](https://github.com/provencher/MRTK-Quest/releases)**. As of 0.6, Examples are split out into a separate package, so that users without MRTK Examples can work with a minimal MRTK-Quest development environment.
 
     If MRTK is already in your project, move to step 3.
 

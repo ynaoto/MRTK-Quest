@@ -156,12 +156,8 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             {
                 return;
             }
-            
-            UpdateHandData(hand, ovrSkeleton);
 
-            IsPositionAvailable = hand.IsTracked;
-
-            bool isTracked = hand.IsTracked;
+            bool isTracked = UpdateHandData(hand, ovrSkeleton);
             IsPositionAvailable = IsRotationAvailable = isTracked;
 
             if (isTracked)
@@ -180,7 +176,6 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
                 UpdateVelocity();
             }
-
 
             for (int i = 0; i < Interactions?.Length; i++)
             {
@@ -265,8 +260,46 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             { BoneId.Hand_WristRoot, TrackedHandJoint.Wrist },
         };
 
-        protected void UpdateHandData(OVRHand ovrHand, OVRSkeleton ovrSkeleton)
+        private float _lastHighConfidenceTime = 0f;
+        protected bool UpdateHandData(OVRHand ovrHand, OVRSkeleton ovrSkeleton)
         {
+            bool isTracked = ovrHand.IsTracked;
+            if (ovrHand.HandConfidence == OVRHand.TrackingConfidence.High)
+            {
+                _lastHighConfidenceTime = Time.unscaledTime;
+            }
+            if (ovrHand.HandConfidence == OVRHand.TrackingConfidence.Low)
+            {
+                if (MRTKOculusConfig.Instance.MinimumHandConfidence == OVRHand.TrackingConfidence.High)
+                {
+                    isTracked = false;
+                }
+                else
+                {
+                    float lowConfidenceTime = Time.time - _lastHighConfidenceTime;
+                    if (MRTKOculusConfig.Instance.LowConfidenceTimeThreshold > 0 &&
+                        MRTKOculusConfig.Instance.LowConfidenceTimeThreshold < lowConfidenceTime)
+                    {
+                        isTracked = false;
+                    }
+                }
+            }
+
+            if (ControllerHandedness == Handedness.Left)
+            {
+                MRTKOculusConfig.Instance.CurrentLeftHandTrackingConfidence = ovrHand.HandConfidence;
+            }
+            else
+            {
+                MRTKOculusConfig.Instance.CurrentRightHandTrackingConfidence = ovrHand.HandConfidence;
+            }
+
+            // Disable hand if not tracked
+            if (handRenderer != null)
+            {
+                handRenderer.enabled = isTracked;
+            }
+
             if (ovrSkeleton != null)
             {
                 var bones = ovrSkeleton.Bones;
@@ -280,7 +313,6 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
             CoreServices.InputSystem?.RaiseHandJointsUpdated(InputSource, ControllerHandedness, jointPoses);
 
-
             if (IsPinching)
             {
                 // If we are already pinching, we make the pinch a bit sticky
@@ -293,17 +325,11 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                              && ovrHand.GetFingerConfidence(OVRHand.HandFinger.Index) == OVRHand.TrackingConfidence.High;
             }
 
-
-            // Disable hand if not tracked
-            if (handRenderer != null)
-            {
-                handRenderer.enabled = ovrHand.IsTracked;
-            }
-
             if (MRTKOculusConfig.Instance.UpdateMaterialPinchStrengthValue && handMaterial != null)
             {
                 handMaterial.SetFloat(pinchStrengthProp, ovrHand.GetFingerPinchStrength(OVRHand.HandFinger.Index));
             }
+            return isTracked;
         }
 
         protected void UpdateBone(OVRBone bone)

@@ -26,6 +26,9 @@ Hands don't seem to work in builds, what am I doing wrong?
 Avatar hands don't work for me, what am I doing wrong?
 - Avatar hand support requires an app id to be set in *Resources/OvrAvatarSettings*. This repo sets a dummy id "12345".
 
+No matter what I do, I cannot get everything setup right, what do I do?
+- Some users have issues with either MRTK, or Oculus Integration. As such, I've created a sample project called [MRTK-Quest-Sample](https://github.com/provencher/MRTK-Quest-Sample). Since it features all the depedencies, it uses a different license than this project, as such I only recommend consulting it for education purposes. I'll try and keep it up to date as all the depedencies evolve.
+
 # Getting started with MRTK-Quest
 
 ## 1. Obtain MRTK-Quest

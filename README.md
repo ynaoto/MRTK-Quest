@@ -31,8 +31,7 @@ No matter what I do, I cannot get everything setup right, what do I do?
 
 How do I allow MRTK-Quest and HoloLens 2 to co-exist in a project?
 - First you will need to add the scripting define "OVRPLUGIN_UNSUPPORTED_PLATFORM" to the UWP build target.
-- Second, you will need to find the Oculus Plugins (DLLs) included in the Oculus Integration, and make sure that they are only included for Windows Standalone or Android builds. By default they are set to be added to all platforms, despite only supporting Windows and Android.
-- Third, delete the SampleFramework from your Oculus integration folder.
+- Second, delete the SampleFramework from your Oculus integration folder.
 - Finally, you will need to replace the OVR Camera Rig from your scene, and use the MRTK Default Camera + Playspace setup.
 -> [MRTK-Quest-Sample](https://github.com/provencher/MRTK-Quest-Sample) is setup this wayfor everything except the camera configuration.
 

@@ -29,6 +29,13 @@ Avatar hands don't work for me, what am I doing wrong?
 No matter what I do, I cannot get everything setup right, what do I do?
 - Some users have issues with either MRTK, or Oculus Integration. As such, I've created a sample project called [MRTK-Quest-Sample](https://github.com/provencher/MRTK-Quest-Sample). Since it features all the depedencies, it uses a different license than this project, as such I only recommend consulting it for education purposes. I'll try and keep it up to date as all the depedencies evolve.
 
+How do I allow MRTK-Quest and HoloLens 2 to co-exist in a project?
+- First you will need to add the scripting define "OVRPLUGIN_UNSUPPORTED_PLATFORM" to the UWP build target.
+- Second, you will need to find the Oculus Plugins (DLLs) included in the Oculus Integration, and make sure that they are only included for Windows Standalone or Android builds. By default they are set to be added to all platforms, despite only supporting Windows and Android.
+- Third, delete the SampleFramework from your Oculus integration folder.
+- Finally, you will need to replace the OVR Camera Rig from your scene, and use the MRTK Default Camera + Playspace setup.
+-> [MRTK-Quest-Sample](https://github.com/provencher/MRTK-Quest-Sample) is setup this wayfor everything except the camera configuration.
+
 # Getting started with MRTK-Quest
 
 ## 1. Obtain MRTK-Quest
@@ -71,7 +78,7 @@ If you wish to use MRTK as a library, and wait for official releases, this is th
     Simply move onto step 3 if your project has MRTK configured this way.
 
 ## 3. Import Oculus Integration
-Download Oculus Integration 13.0 from Asset Store and import it.
+Download [Oculus Integration 13.0](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022) from Asset Store and import it.
 - Alternatively just drag and drop the Oculus folder into Assets/
 
 ## 4. Project Configuration Window

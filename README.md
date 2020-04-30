@@ -11,8 +11,8 @@ It was built to showcase the hand-driven interaction model designed by Microsoft
 [![Demo video](https://user-images.githubusercontent.com/7420990/75618297-21b59300-5b3a-11ea-8093-365ce3921c15.gif)](https://twitter.com/prvncher/status/1235731976893665280)
 
 # Supported versions
-- Unity 2018.4.x (Currently targetting 2018.4.18f1). Some users have reported success with 2019.3 as well.
-- Oculus Integration 14.0
+- Unity 2018.4.x (Currently targetting 2018.4.22f1). Some users have reported success with 2019.3 as well.
+- Oculus Integration 16.0
 - Mixed Reality Toolkit v2.3.0+
 
 # Supported target devices
@@ -77,7 +77,7 @@ If you wish to use MRTK as a library, and wait for official releases, this is th
     Simply move onto step 3 if your project has MRTK configured this way.
 
 ## 3. Import Oculus Integration
-Download [Oculus Integration 13.0](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022) from Asset Store and import it.
+Download [Oculus Integration 16.0](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022) from Asset Store and import it.
 - Alternatively just drag and drop the Oculus folder into Assets/
 
 ## 4. Project Configuration Window
@@ -91,7 +91,7 @@ however, from my testing with Quest, it works properly, and improves performance
 ## 5. MRTK-Quest Integration Configuration
 New Config scriptable object exposing hand mesh material and performance seetings.
 This is a project singleton located in Resources/MRTK-OculusConfig    
-![image](https://user-images.githubusercontent.com/7420990/75618441-81ad3900-5b3c-11ea-9baa-9ac2833e8dad.png)
+![image](https://user-images.githubusercontent.com/7420990/80736858-b871e200-8ae0-11ea-869a-60b6df212365.png)
 
 
 ## 6. Community and support

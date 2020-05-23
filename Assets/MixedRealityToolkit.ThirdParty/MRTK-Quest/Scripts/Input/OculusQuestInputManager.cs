@@ -80,6 +80,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             base.Enable();
             SetupInput();
             ConfigurePerformancePreferences();
+            MRTKOculusConfig.Instance.onCustomHandMaterialUpdate += UpdateHandMaterials;
         }
 
         private void SetupInput()
@@ -158,6 +159,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
             RemoveAllControllerDevices();
             RemoveAllHandDevices();
+            MRTKOculusConfig.Instance.onCustomHandMaterialUpdate -= UpdateHandMaterials;
         }
 
         public override IMixedRealityController[] GetActiveControllers()
@@ -307,6 +309,21 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             }
         }
 
+        public void UpdateHandMaterials()
+        {
+            if (rightHandMaterial)
+                Object.Destroy(rightHandMaterial);
+
+            rightHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
+
+            if (leftHandMaterial)
+                Object.Destroy(leftHandMaterial);
+
+            leftHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
+
+            RemoveAllHandDevices();
+        }
+
         private OculusQuestHand GetOrAddHand(Handedness handedness, OVRHand ovrHand)
         {
             if (trackedHands.ContainsKey(handedness))
@@ -366,7 +383,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
         private void RemoveAllHandDevices()
         {
-            if(trackedHands.Count == 0) return;
+            if (trackedHands.Count == 0) return;
 
             // Create a new list to avoid causing an error removing items from a list currently being iterated on.
             foreach (var hand in new List<OculusQuestHand>(trackedHands.Values))

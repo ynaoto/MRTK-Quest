@@ -43,7 +43,9 @@ namespace prvncher.MixedReality.Toolkit.Config
             {
                 if (instance == null)
                 {
-                    instance = Resources.Load<MRTKOculusConfig>("MRTK-OculusConfig");
+                    // Creating a configurable instance so that making any runtime changes won't affect the original. 
+                    MRTKOculusConfig configFile = Resources.Load<MRTKOculusConfig>("MRTK-OculusConfig");
+                    instance = Instantiate(configFile);
 
                     if (instance == null)
                     {
@@ -106,10 +108,25 @@ namespace prvncher.MixedReality.Toolkit.Config
         [Tooltip("Custom hand material to use for hand tracking hand mesh.")]
         private Material customHandMaterial = null;
 
+        public System.Action onCustomHandMaterialUpdate;
         /// <summary>
         /// Custom hand material to use for hand tracking hand mesh.
         /// </summary>
-        public Material CustomHandMaterial => customHandMaterial;
+        public Material CustomHandMaterial
+        {
+            get
+            {
+                return customHandMaterial;
+            }
+
+            set
+            {
+                customHandMaterial = value;
+                if (onCustomHandMaterialUpdate != null)
+                    onCustomHandMaterialUpdate();
+
+            }
+        }
 
         [SerializeField]
         [Tooltip("If true, will update material pinch strength using OVR Values.")]
@@ -147,7 +164,7 @@ namespace prvncher.MixedReality.Toolkit.Config
         /// Current tracking confidence of left hand. Value managed by OculusQuestHand.cs.
         /// </summary>
         public OVRHand.TrackingConfidence CurrentLeftHandTrackingConfidence { get; set; }
-        
+
         /// <summary>
         /// Current tracking confidence of right hand. Value managed by OculusQuestHand.cs.
         /// </summary>

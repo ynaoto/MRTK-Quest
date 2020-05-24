@@ -108,23 +108,18 @@ namespace prvncher.MixedReality.Toolkit.Config
         [Tooltip("Custom hand material to use for hand tracking hand mesh.")]
         private Material customHandMaterial = null;
 
-        public System.Action onCustomHandMaterialUpdate;
+        public System.Action OnCustomHandMaterialUpdate;
         /// <summary>
         /// Custom hand material to use for hand tracking hand mesh.
         /// </summary>
         public Material CustomHandMaterial
         {
-            get
-            {
-                return customHandMaterial;
-            }
+            get => customHandMaterial;
 
             set
             {
                 customHandMaterial = value;
-                if (onCustomHandMaterialUpdate != null)
-                    onCustomHandMaterialUpdate();
-
+                OnCustomHandMaterialUpdate?.Invoke();
             }
         }
 

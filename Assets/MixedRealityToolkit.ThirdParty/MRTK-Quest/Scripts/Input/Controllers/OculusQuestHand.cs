@@ -84,6 +84,13 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             this.handMaterial = handMaterial;
             handRenderer = ovrHand.GetComponent<Renderer>();
 
+            UpdateHandMaterial(handMaterial);
+
+        }
+
+        public void UpdateHandMaterial(Material handMaterial)
+        {
+
             if (!MRTKOculusConfig.Instance.UseCustomHandMaterial) return;
 
             handRenderer.sharedMaterial = handMaterial;

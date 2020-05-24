@@ -80,7 +80,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             base.Enable();
             SetupInput();
             ConfigurePerformancePreferences();
-            MRTKOculusConfig.Instance.onCustomHandMaterialUpdate += UpdateHandMaterials;
+            MRTKOculusConfig.Instance.OnCustomHandMaterialUpdate += UpdateHandMaterial;
         }
 
         private void SetupInput()
@@ -159,7 +159,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
             RemoveAllControllerDevices();
             RemoveAllHandDevices();
-            MRTKOculusConfig.Instance.onCustomHandMaterialUpdate -= UpdateHandMaterials;
+            MRTKOculusConfig.Instance.OnCustomHandMaterialUpdate -= UpdateHandMaterial;
         }
 
         public override IMixedRealityController[] GetActiveControllers()
@@ -309,7 +309,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             }
         }
 
-        public void UpdateHandMaterials()
+        public void UpdateHandMaterial()
         {
             if (rightHandMaterial)
                 Object.Destroy(rightHandMaterial);
@@ -321,7 +321,18 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
             leftHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
 
-            RemoveAllHandDevices();
+            if (rightHand.IsTracked)
+            {
+                var rHand = GetOrAddHand(Handedness.Right, rightHand);
+                rHand.UpdateHandMaterial(rightHandMaterial);
+            }
+            if (leftHand.IsTracked)
+            {
+                var lHand = GetOrAddHand(Handedness.Left, leftHand);
+                lHand.UpdateHandMaterial(leftHandMaterial);
+            }
+
+
         }
 
         private OculusQuestHand GetOrAddHand(Handedness handedness, OVRHand ovrHand)

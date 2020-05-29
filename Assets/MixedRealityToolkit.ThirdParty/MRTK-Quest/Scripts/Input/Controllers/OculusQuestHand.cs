@@ -343,6 +343,22 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
             // Pinch was also used as grab, we want to allow hand-curl grab not just pinch.
             // Determine pinch and grab separately
+            CheckIfJointPosesGrabbing();
+
+            if (MRTKOculusConfig.Instance.UpdateMaterialPinchStrengthValue && handMaterial != null)
+            {
+                if (IsGrabbing)
+                {
+                    pinchStrength = 1.0f;
+                }
+                handMaterial.SetFloat(pinchStrengthProp, pinchStrength);
+            }
+
+            return isTracked;
+        }
+
+        protected void CheckIfJointPosesGrabbing()
+        {
             MixedRealityPose wristPose, indexKnucklePose, indexTipPose;
             if (jointPoses.TryGetValue(TrackedHandJoint.Wrist, out wristPose))
             {
@@ -351,21 +367,12 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                     if (jointPoses.TryGetValue(TrackedHandJoint.IndexKnuckle, out indexKnucklePose))
                     {
                         // compare wrist-knuckle to wrist-tip
-                        float wristToIndexTip = Vector3.Distance(wristPose.Position, indexTipPose.Position);
-                        float wristToIndexKnuckle = Vector3.Distance(wristPose.Position, indexKnucklePose.Position);
-                        bool grip = wristToIndexKnuckle >= wristToIndexTip;
-
-                        IsGrabbing = grip;
+                        Vector3 wristToIndexTip = indexTipPose.Position - wristPose.Position;
+                        Vector3 wristToIndexKnuckle = indexKnucklePose.Position - wristPose.Position;
+                        IsGrabbing = wristToIndexKnuckle.sqrMagnitude >= wristToIndexTip.sqrMagnitude;
                     }
                 }
             }
-
-            if (MRTKOculusConfig.Instance.UpdateMaterialPinchStrengthValue && handMaterial != null)
-            {
-                handMaterial.SetFloat(pinchStrengthProp, IsGrabbing ? 1.0f : pinchStrength);
-            }
-
-            return isTracked;
         }
 
         // 4 cm is the treshold for fingers being far apart.

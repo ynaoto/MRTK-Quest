@@ -80,6 +80,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             base.Enable();
             SetupInput();
             ConfigurePerformancePreferences();
+            MRTKOculusConfig.Instance.OnCustomHandMaterialUpdate += UpdateHandMaterial;
         }
 
         private void SetupInput()
@@ -156,6 +157,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         {
             base.Disable();
 
+            MRTKOculusConfig.Instance.OnCustomHandMaterialUpdate -= UpdateHandMaterial;
             RemoveAllControllerDevices();
             RemoveAllHandDevices();
         }
@@ -307,6 +309,36 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             }
         }
 
+
+        private void UpdateHandMaterial()
+        {
+            if (rightHandMaterial != null)
+            {
+                Object.Destroy(rightHandMaterial);
+            }
+            rightHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
+
+            if (leftHandMaterial != null)
+            {
+                Object.Destroy(leftHandMaterial);
+            }
+            leftHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
+
+            // If the hands are tracked then updating their material. 
+            if (rightHand.IsTracked)
+            {
+                var rHand = GetOrAddHand(Handedness.Right, rightHand);
+                rHand.UpdateHandMaterial(rightHandMaterial);
+            }
+
+            if (leftHand.IsTracked)
+            {
+                var lHand = GetOrAddHand(Handedness.Left, leftHand);
+                lHand.UpdateHandMaterial(leftHandMaterial);
+            }
+
+        }
+
         private OculusQuestHand GetOrAddHand(Handedness handedness, OVRHand ovrHand)
         {
             if (trackedHands.ContainsKey(handedness))
@@ -366,7 +398,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
         private void RemoveAllHandDevices()
         {
-            if(trackedHands.Count == 0) return;
+            if (trackedHands.Count == 0) return;
 
             // Create a new list to avoid causing an error removing items from a list currently being iterated on.
             foreach (var hand in new List<OculusQuestHand>(trackedHands.Values))

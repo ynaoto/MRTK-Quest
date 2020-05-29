@@ -53,7 +53,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         private KalmanFilterVector3 palmFilter = new KalmanFilterVector3();
         private KalmanFilterVector3 indexTipFilter = new KalmanFilterVector3();
 
-        private readonly Material handMaterial;
+        private Material handMaterial;
         private Renderer handRenderer;
 
         // TODO: Hand mesh
@@ -81,7 +81,6 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         {
             palmFilter.Reset();
             indexTipFilter.Reset();
-            this.handMaterial = handMaterial;
             handRenderer = ovrHand.GetComponent<Renderer>();
 
             UpdateHandMaterial(handMaterial);
@@ -90,6 +89,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
         public void UpdateHandMaterial(Material handMaterial)
         {
+            this.handMaterial = handMaterial;
 
             if (!MRTKOculusConfig.Instance.UseCustomHandMaterial) return;
 

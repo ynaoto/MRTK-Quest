@@ -153,6 +153,10 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
         protected bool IsPinching { set; get; }
 
+        // Pinch was also used as grab, we want to allow hand-curl grab not just pinch.
+        // Determine pinch and grab separately
+        protected bool IsGrabbing { set; get; }
+
         /// <summary>
         /// Update the controller data from the provided platform state
         /// </summary>
@@ -218,7 +222,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                         }
                         break;
                     case DeviceInputType.TriggerPress:
-                        Interactions[i].BoolData = IsPinching;
+                        Interactions[i].BoolData = IsPinching || IsGrabbing;
 
                         if (Interactions[i].Changed)
                         {
@@ -344,11 +348,38 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                 }
             }
 
+            // Pinch was also used as grab, we want to allow hand-curl grab not just pinch.
+            // Determine pinch and grab separately
+            CheckIfJointPosesGrabbing();
+
             if (MRTKOculusConfig.Instance.UpdateMaterialPinchStrengthValue && handMaterial != null)
             {
+                if (IsGrabbing)
+                {
+                    pinchStrength = 1.0f;
+                }
                 handMaterial.SetFloat(pinchStrengthProp, pinchStrength);
             }
+
             return isTracked;
+        }
+
+        protected void CheckIfJointPosesGrabbing()
+        {
+            MixedRealityPose wristPose, indexKnucklePose, indexTipPose;
+            if (jointPoses.TryGetValue(TrackedHandJoint.Wrist, out wristPose))
+            {
+                if (jointPoses.TryGetValue(TrackedHandJoint.IndexTip, out indexTipPose))
+                {
+                    if (jointPoses.TryGetValue(TrackedHandJoint.IndexKnuckle, out indexKnucklePose))
+                    {
+                        // compare wrist-knuckle to wrist-tip
+                        Vector3 wristToIndexTip = indexTipPose.Position - wristPose.Position;
+                        Vector3 wristToIndexKnuckle = indexKnucklePose.Position - wristPose.Position;
+                        IsGrabbing = wristToIndexKnuckle.sqrMagnitude >= wristToIndexTip.sqrMagnitude;
+                    }
+                }
+            }
         }
 
         // 4 cm is the treshold for fingers being far apart.

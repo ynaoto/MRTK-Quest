@@ -146,6 +146,10 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
         protected bool IsPinching { set; get; }
 
+        // Pinch was also used as grab, we want to allow hand-curl grab not just pinch.
+        // Determine pinch and grab separately
+        protected bool IsGrabbing { set; get; }
+
         /// <summary>
         /// Update the controller data from the provided platform state
         /// </summary>
@@ -211,7 +215,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                         }
                         break;
                     case DeviceInputType.TriggerPress:
-                        Interactions[i].BoolData = IsPinching;
+                        Interactions[i].BoolData = IsPinching || IsGrabbing;
 
                         if (Interactions[i].Changed)
                         {
@@ -337,10 +341,30 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                 }
             }
 
+            // Pinch was also used as grab, we want to allow hand-curl grab not just pinch.
+            // Determine pinch and grab separately
+            MixedRealityPose wristPose, indexKnucklePose, indexTipPose;
+            if (jointPoses.TryGetValue(TrackedHandJoint.Wrist, out wristPose))
+            {
+                if (jointPoses.TryGetValue(TrackedHandJoint.IndexTip, out indexTipPose))
+                {
+                    if (jointPoses.TryGetValue(TrackedHandJoint.IndexKnuckle, out indexKnucklePose))
+                    {
+                        // compare wrist-knuckle to wrist-tip
+                        float wristToIndexTip = Vector3.Distance(wristPose.Position, indexTipPose.Position);
+                        float wristToIndexKnuckle = Vector3.Distance(wristPose.Position, indexKnucklePose.Position);
+                        bool grip = wristToIndexKnuckle >= wristToIndexTip;
+
+                        IsGrabbing = grip;
+                    }
+                }
+            }
+
             if (MRTKOculusConfig.Instance.UpdateMaterialPinchStrengthValue && handMaterial != null)
             {
-                handMaterial.SetFloat(pinchStrengthProp, pinchStrength);
+                handMaterial.SetFloat(pinchStrengthProp, IsGrabbing ? 1.0f : pinchStrength);
             }
+
             return isTracked;
         }
 

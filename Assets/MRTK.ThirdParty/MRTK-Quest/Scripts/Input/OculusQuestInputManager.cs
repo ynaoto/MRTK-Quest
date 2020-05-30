@@ -89,6 +89,9 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             cameraRig = GameObject.FindObjectOfType<OVRCameraRig>();
             if (cameraRig == null)
             {
+                // Temporarily disable camera destruction.
+                // Not having an OVRCameraRig causes bugs at runtime.
+                /*
                 var mainCamera = Camera.main;
                 Transform cameraParent = null;
                 if (mainCamera != null)
@@ -101,6 +104,9 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
                 // Instantiate camera rig as a child of the MixedRealityPlayspace
                 cameraRig = GameObject.Instantiate(MRTKOculusConfig.Instance.OVRCameraRigPrefab);
+                */
+                UnityEngine.Debug.LogError("No OVR Camera Rig found. Could not initialize MRTK-Quest.");
+                return;
             }
             // Ensure all related game objects are configured
             cameraRig.EnsureGameObjectIntegrity();

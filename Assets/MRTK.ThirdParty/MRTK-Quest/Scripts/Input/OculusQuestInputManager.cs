@@ -53,12 +53,10 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         private OVRHand rightHand;
         private OVRMeshRenderer righMeshRenderer;
         private OVRSkeleton rightSkeleton;
-        private Material rightHandMaterial;
 
         private OVRHand leftHand;
         private OVRMeshRenderer leftMeshRenderer;
         private OVRSkeleton leftSkeleton;
-        private Material leftHandMaterial;
 
         private bool handsInitialized = false;
 
@@ -310,29 +308,22 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
         private void UpdateHandMaterial()
         {
-            if (rightHandMaterial != null)
+            foreach (var hand in trackedHands.Values)
             {
-                Object.Destroy(rightHandMaterial);
+                hand.UpdateHandMaterial(MRTKOculusConfig.Instance.CustomHandMaterial);
             }
-            rightHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
-
-            if (leftHandMaterial != null)
+            foreach (var hand in inactiveHandCache.Values)
             {
-                Object.Destroy(leftHandMaterial);
-            }
-            leftHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
-
-            // If the hands are tracked then updating their material. 
-            if (rightHand.IsTracked)
-            {
-                var rHand = GetOrAddHand(Handedness.Right, rightHand);
-                rHand.UpdateHandMaterial(rightHandMaterial);
+                hand.UpdateHandMaterial(MRTKOculusConfig.Instance.CustomHandMaterial);
             }
 
-            if (leftHand.IsTracked)
+            foreach (var controller in trackedControllers.Values)
             {
-                var lHand = GetOrAddHand(Handedness.Left, leftHand);
-                lHand.UpdateHandMaterial(leftHandMaterial);
+                controller.UpdateAvatarMaterial(MRTKOculusConfig.Instance.CustomHandMaterial);
+            }
+            foreach (var controller in inactiveControllerCache.Values)
+            {
+                controller.UpdateAvatarMaterial(MRTKOculusConfig.Instance.CustomHandMaterial);
             }
         }
 
@@ -341,24 +332,6 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             if (trackedHands.ContainsKey(handedness))
             {
                 return trackedHands[handedness];
-            }
-
-            Material handMaterial = null;
-            if (handedness == Handedness.Right)
-            {
-                if (rightHandMaterial == null)
-                {
-                    rightHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
-                }
-                handMaterial = rightHandMaterial;
-            }
-            else
-            {
-                if (leftHandMaterial == null)
-                {
-                    leftHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
-                }
-                handMaterial = leftHandMaterial;
             }
 
             // Add new hand
@@ -370,7 +343,8 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
             if (!inactiveHandCache.TryGetValue(handedness, out var controller))
             {
-                controller = new OculusQuestHand(TrackingState.Tracked, handedness, ovrHand, handMaterial, inputSource);
+                controller = new OculusQuestHand(TrackingState.Tracked, handedness, inputSource);
+                controller.InitializeHand(ovrHand, MRTKOculusConfig.Instance.CustomHandMaterial);
             }
             inactiveHandCache.Remove(handedness);
 

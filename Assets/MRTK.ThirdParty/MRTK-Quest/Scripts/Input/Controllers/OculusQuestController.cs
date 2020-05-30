@@ -226,12 +226,11 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         /// <param name="newMaterial">Material to use for hands.</param>
         public void UpdateAvatarMaterial(Material newMaterial)
         {
-            if (newMaterial == null) return;
+            if (newMaterial == null || !MRTKOculusConfig.Instance.UseCustomHandMaterial) return;
             if (handMaterial != null)
             {
                 Object.Destroy(handMaterial);
             }
-
             handMaterial = new Material(newMaterial);
 
             ApplyHandMaterial();

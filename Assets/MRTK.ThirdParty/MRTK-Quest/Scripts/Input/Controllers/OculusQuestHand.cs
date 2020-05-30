@@ -53,8 +53,8 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         private KalmanFilterVector3 palmFilter = new KalmanFilterVector3();
         private KalmanFilterVector3 indexTipFilter = new KalmanFilterVector3();
 
-        private Material handMaterial;
-        private Renderer handRenderer;
+        private Material handMaterial = null;
+        private Renderer handRenderer = null;
 
         // TODO: Hand mesh
         // private int[] handMeshTriangleIndices = null;
@@ -74,29 +74,25 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         {
             palmFilter.Reset();
             indexTipFilter.Reset();
+            pinchStrengthProp = Shader.PropertyToID(MRTKOculusConfig.Instance.PinchStrengthMaterialProperty);
         }
 
-        public OculusQuestHand(TrackingState trackingState, Handedness controllerHandedness, OVRHand ovrHand, Material handMaterial, IMixedRealityInputSource inputSource = null, MixedRealityInteractionMapping[] interactions = null)
-            : base(trackingState, controllerHandedness, inputSource, interactions)
+        public void InitializeHand(OVRHand ovrHand, Material handMaterial)
         {
-            palmFilter.Reset();
-            indexTipFilter.Reset();
             handRenderer = ovrHand.GetComponent<Renderer>();
-
             UpdateHandMaterial(handMaterial);
         }
 
-        public void UpdateHandMaterial(Material handMaterial)
+        public void UpdateHandMaterial(Material newHandMaterial)
         {
-            this.handMaterial = handMaterial;
+            if (newHandMaterial == null || !MRTKOculusConfig.Instance.UseCustomHandMaterial) return;
 
-            if (!MRTKOculusConfig.Instance.UseCustomHandMaterial) return;
-
-            handRenderer.sharedMaterial = handMaterial;
-            if (MRTKOculusConfig.Instance.UpdateMaterialPinchStrengthValue)
+            if (handMaterial != null)
             {
-                pinchStrengthProp = Shader.PropertyToID(MRTKOculusConfig.Instance.PinchStrengthMaterialProperty);
+                Object.Destroy(handMaterial);
             }
+            handMaterial = new Material(newHandMaterial);
+            handRenderer.sharedMaterial = handMaterial;
         }
 
         public void CleanupHand()

@@ -2,6 +2,8 @@
     "name": "prvncher.MRTKQuest",
     "references": [
         "Microsoft.MixedReality.Toolkit",
+        "Microsoft.MixedReality.Toolkit.Services.InputSystem",
+        "Microsoft.MixedReality.Toolkit.SDK",
         "Oculus.VR"
     ],
     "optionalUnityReferences": [],

@@ -3,5 +3,5 @@
 	url = https://github.com/microsoft/MixedRealityToolkit-Unity
 
 [submodule "ThirdParty/MRTK-Audio"]
-	path = Assets/MixedRealityToolkit.ThirdParty/MRTK-Audio
+	path = Assets/MRTK.ThirdParty/MRTK-Audio
 	url = https://github.com/joncohenproducer/MRTK-Audio.git

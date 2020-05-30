@@ -3,13 +3,6 @@
 cd `dirname $0`/../Assets/
 
 FOLDERS_TO_LINK=(
-    MixedRealityToolkit
-    MixedRealityToolkit.SDK
-    MixedRealityToolkit.Services
-    MixedRealityToolkit.Providers
-    MixedRealityToolkit.Examples
-    MixedRealityToolkit.Extensions
-    MixedRealityToolkit.Tools
     MRTK
 )
 

@@ -45,17 +45,18 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         private Dictionary<Handedness, OculusQuestHand> trackedHands = new Dictionary<Handedness, OculusQuestHand>();
         private Dictionary<Handedness, OculusQuestController> trackedControllers = new Dictionary<Handedness, OculusQuestController>();
 
+        private Dictionary<Handedness, OculusQuestHand> inactiveHandCache = new Dictionary<Handedness, OculusQuestHand>();
+        private Dictionary<Handedness, OculusQuestController> inactiveControllerCache = new Dictionary<Handedness, OculusQuestController>();
+
         private OVRCameraRig cameraRig;
 
         private OVRHand rightHand;
         private OVRMeshRenderer righMeshRenderer;
         private OVRSkeleton rightSkeleton;
-        private Material rightHandMaterial;
 
         private OVRHand leftHand;
         private OVRMeshRenderer leftMeshRenderer;
         private OVRSkeleton leftSkeleton;
-        private Material leftHandMaterial;
 
         private bool handsInitialized = false;
 
@@ -88,6 +89,9 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             cameraRig = GameObject.FindObjectOfType<OVRCameraRig>();
             if (cameraRig == null)
             {
+                // Temporarily disable camera destruction.
+                // Not having an OVRCameraRig causes bugs at runtime.
+                /*
                 var mainCamera = Camera.main;
                 Transform cameraParent = null;
                 if (mainCamera != null)
@@ -100,6 +104,9 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
                 // Instantiate camera rig as a child of the MixedRealityPlayspace
                 cameraRig = GameObject.Instantiate(MRTKOculusConfig.Instance.OVRCameraRigPrefab);
+                */
+                UnityEngine.Debug.LogError("No OVR Camera Rig found. Could not initialize MRTK-Quest.");
+                return;
             }
             // Ensure all related game objects are configured
             cameraRig.EnsureGameObjectIntegrity();
@@ -229,10 +236,13 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             IMixedRealityInputSystem inputSystem = Service as IMixedRealityInputSystem;
             var inputSource = inputSystem?.RequestNewGenericInputSource($"Oculus Quest {handedness} Controller", pointers, inputSourceType);
 
-            var controller = new OculusQuestController(TrackingState.Tracked, handedness, inputSource);
-
-            // Code is obsolete later on, but older MRTK versions require it.
-            controller.SetupConfiguration(typeof(OculusQuestController));
+            if (!inactiveControllerCache.TryGetValue(handedness, out var controller))
+            {
+                controller = new OculusQuestController(TrackingState.Tracked, handedness, inputSource);
+                controller.UpdateAvatarMaterial(MRTKOculusConfig.Instance.CustomHandMaterial);
+            }
+            inactiveHandCache.Remove(handedness);
+            controller.ApplyHandMaterial();
 
             for (int i = 0; i < controller.InputSource?.Pointers?.Length; i++)
             {
@@ -272,14 +282,6 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             CoreServices.InputSystem?.RaiseSourceLost(controller.InputSource, controller);
             trackedControllers.Remove(controller.ControllerHandedness);
 
-            // Recycle pointers makes this loop obsolete. If you are using an MRTK version older than 2.3, please use the loop and comment out RecyclePointers.
-            /*
-            foreach (IMixedRealityPointer pointer in controller.InputSource.Pointers)
-            {
-                if (pointer == null) continue;
-                pointer.Controller = null;
-            }
-            */
             RecyclePointers(controller.InputSource);
         }
         #endregion
@@ -312,31 +314,23 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
         private void UpdateHandMaterial()
         {
-            if (rightHandMaterial != null)
+            foreach (var hand in trackedHands.Values)
             {
-                Object.Destroy(rightHandMaterial);
+                hand.UpdateHandMaterial(MRTKOculusConfig.Instance.CustomHandMaterial);
             }
-            rightHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
-
-            if (leftHandMaterial != null)
+            foreach (var hand in inactiveHandCache.Values)
             {
-                Object.Destroy(leftHandMaterial);
-            }
-            leftHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
-
-            // If the hands are tracked then updating their material. 
-            if (rightHand.IsTracked)
-            {
-                var rHand = GetOrAddHand(Handedness.Right, rightHand);
-                rHand.UpdateHandMaterial(rightHandMaterial);
+                hand.UpdateHandMaterial(MRTKOculusConfig.Instance.CustomHandMaterial);
             }
 
-            if (leftHand.IsTracked)
+            foreach (var controller in trackedControllers.Values)
             {
-                var lHand = GetOrAddHand(Handedness.Left, leftHand);
-                lHand.UpdateHandMaterial(leftHandMaterial);
+                controller.UpdateAvatarMaterial(MRTKOculusConfig.Instance.CustomHandMaterial);
             }
-
+            foreach (var controller in inactiveControllerCache.Values)
+            {
+                controller.UpdateAvatarMaterial(MRTKOculusConfig.Instance.CustomHandMaterial);
+            }
         }
 
         private OculusQuestHand GetOrAddHand(Handedness handedness, OVRHand ovrHand)
@@ -346,24 +340,6 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                 return trackedHands[handedness];
             }
 
-            Material handMaterial = null;
-            if (handedness == Handedness.Right)
-            {
-                if (rightHandMaterial == null)
-                {
-                    rightHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
-                }
-                handMaterial = rightHandMaterial;
-            }
-            else
-            {
-                if (leftHandMaterial == null)
-                {
-                    leftHandMaterial = new Material(MRTKOculusConfig.Instance.CustomHandMaterial);
-                }
-                handMaterial = leftHandMaterial;
-            }
-
             // Add new hand
             var pointers = RequestPointers(SupportedControllerType.ArticulatedHand, handedness);
             var inputSourceType = InputSourceType.Hand;
@@ -371,10 +347,12 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             IMixedRealityInputSystem inputSystem = Service as IMixedRealityInputSystem;
             var inputSource = inputSystem?.RequestNewGenericInputSource($"Oculus Quest {handedness} Hand", pointers, inputSourceType);
 
-            var controller = new OculusQuestHand(TrackingState.Tracked, handedness, ovrHand, handMaterial, inputSource);
-
-            // Code is obsolete later on, but older MRTK versions require it.
-            controller.SetupConfiguration(typeof(OculusQuestHand));
+            if (!inactiveHandCache.TryGetValue(handedness, out var controller))
+            {
+                controller = new OculusQuestHand(TrackingState.Tracked, handedness, inputSource);
+                controller.InitializeHand(ovrHand, MRTKOculusConfig.Instance.CustomHandMaterial);
+            }
+            inactiveHandCache.Remove(handedness);
 
             for (int i = 0; i < controller.InputSource?.Pointers?.Length; i++)
             {
@@ -413,17 +391,11 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             if (hand == null) return;
 
             hand.CleanupHand();
+            inactiveHandCache.Add(hand.ControllerHandedness, hand);
+
             CoreServices.InputSystem?.RaiseSourceLost(hand.InputSource, hand);
             trackedHands.Remove(hand.ControllerHandedness);
 
-            // Recycle pointers makes this loop obsolete. If you are using an MRTK version older than 2.3, please use the loop and comment out RecyclePointers.
-            /*
-            foreach (IMixedRealityPointer pointer in hand.InputSource.Pointers)
-            {
-                if (pointer == null) continue;
-                pointer.Controller = null;
-            }
-            */
             RecyclePointers(hand.InputSource);
         }
         #endregion

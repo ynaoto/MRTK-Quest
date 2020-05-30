@@ -43,6 +43,9 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         private MixedRealityPose currentIndexPose = MixedRealityPose.ZeroIdentity;
         private MixedRealityPose currentGripPose = MixedRealityPose.ZeroIdentity;
 
+        private List<Renderer> handRenderers = new List<Renderer>();
+        private Material handMaterial = null;
+
         #region AvatarHandReferences
         private GameObject handRoot = null;
         private GameObject handGrip = null;
@@ -217,6 +220,37 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             }
         }
 
+        /// <summary>
+        /// Updates material instance used for avatar hands.
+        /// </summary>
+        /// <param name="newMaterial">Material to use for hands.</param>
+        public void UpdateAvatarMaterial(Material newMaterial)
+        {
+            if (newMaterial == null || !MRTKOculusConfig.Instance.UseCustomHandMaterial) return;
+            if (handMaterial != null)
+            {
+                Object.Destroy(handMaterial);
+            }
+            handMaterial = new Material(newMaterial);
+
+            ApplyHandMaterial();
+        }
+
+        public void ApplyHandMaterial()
+        {
+            foreach (var handRenderer in handRenderers)
+            {
+                handRenderer.sharedMaterial = handMaterial;
+            }
+        }
+
+        private void UpdateHandRenderers(GameObject handRoot)
+        {
+            if(handRoot == null) return;
+            handRenderers = new List<Renderer>(handRoot.GetComponentsInChildren<Renderer>());
+            ApplyHandMaterial();
+        }
+
         private bool InitializeAvatarHandReferences()
         {
             if (!MRTKOculusConfig.Instance.RenderAvatarHandsInsteadOfController) return false;
@@ -233,6 +267,9 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
             // With no root, no use in looking up other joints
             if (handRoot == null) return false;
+
+            string handMeshRoot = "hand_" + (ControllerHandedness == Handedness.Left ? "left" : "right"); 
+            UpdateHandRenderers(GameObject.Find(handMeshRoot));
 
             // If we have a hand root match, we look up all other hand joints
 
@@ -475,10 +512,8 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             if (ControllerHandedness == Handedness.Left)
             {
                 // Rotate palm 180 on X to flip up
-                correctedRotation *= Quaternion.Euler(180f, 0f, 0f);
-
                 // Rotate palm 90 degrees on y to align x with right
-                correctedRotation *= Quaternion.Euler(0f, -90f, 0f);
+                correctedRotation *= Quaternion.Euler(180f, -90f, 0f);
             }
             else
             {

@@ -35,7 +35,7 @@ using UnityEngine;
 
 namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 {
-    [MixedRealityController(SupportedControllerType.ArticulatedHand, new[] { Handedness.Left, Handedness.Right })]
+    [MixedRealityController(SupportedControllerType.OculusTouch, new[] { Handedness.Left, Handedness.Right })]
     public class OculusQuestController : BaseController, IMixedRealityHand
     {
         private MixedRealityPose currentPointerPose = MixedRealityPose.ZeroIdentity;
@@ -85,7 +85,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             : base(trackingState, controllerHandedness, inputSource, interactions)
         {
         }
-
+        /*
         /// <summary>
         /// The Windows Mixed Reality Controller default interactions.
         /// </summary>
@@ -97,11 +97,57 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             new MixedRealityInteractionMapping(2, "Select", AxisType.Digital, DeviceInputType.Select, new MixedRealityInputAction(1, "Select", AxisType.Digital)),
             new MixedRealityInteractionMapping(3, "Grab", AxisType.SingleAxis, DeviceInputType.TriggerPress, new MixedRealityInputAction(7, "Grip Press", AxisType.SingleAxis)),
             new MixedRealityInteractionMapping(4, "Index Finger Pose", AxisType.SixDof, DeviceInputType.IndexFinger,  new MixedRealityInputAction(13, "Index Finger Pose", AxisType.SixDof)),
+            //new MixedRealityInteractionMapping(5, "Teleport Direction", AxisType.DualAxis, DeviceInputType.ThumbStick,  new MixedRealityInputAction(13, "Teleport Direction", AxisType.DualAxis)),
+        };
+        */
+
+        public override MixedRealityInteractionMapping[] DefaultLeftHandedInteractions => new[]
+{
+            new MixedRealityInteractionMapping(0, "Spatial Pointer", AxisType.SixDof, DeviceInputType.SpatialPointer),
+            new MixedRealityInteractionMapping(1, "Axis1D.PrimaryIndexTrigger", AxisType.SingleAxis, DeviceInputType.Trigger, ControllerMappingLibrary.AXIS_9),
+            new MixedRealityInteractionMapping(2, "Axis1D.PrimaryIndexTrigger Touch", AxisType.Digital, DeviceInputType.TriggerTouch, KeyCode.JoystickButton14),
+            new MixedRealityInteractionMapping(3, "Axis1D.PrimaryIndexTrigger Near Touch", AxisType.Digital, DeviceInputType.TriggerNearTouch, ControllerMappingLibrary.AXIS_13),
+            new MixedRealityInteractionMapping(4, "Axis1D.PrimaryIndexTrigger Press", AxisType.Digital, DeviceInputType.TriggerPress, ControllerMappingLibrary.AXIS_9),
+            new MixedRealityInteractionMapping(5, "Axis1D.PrimaryHandTrigger Press", AxisType.SingleAxis, DeviceInputType.Trigger, ControllerMappingLibrary.AXIS_11),
+            new MixedRealityInteractionMapping(6, "Axis2D.PrimaryThumbstick", AxisType.DualAxis, DeviceInputType.ThumbStick, ControllerMappingLibrary.AXIS_1, ControllerMappingLibrary.AXIS_2),
+            new MixedRealityInteractionMapping(7, "Button.PrimaryThumbstick Touch", AxisType.Digital, DeviceInputType.ThumbStickTouch, KeyCode.JoystickButton16),
+            new MixedRealityInteractionMapping(8, "Button.PrimaryThumbstick Near Touch", AxisType.Digital, DeviceInputType.ThumbNearTouch, ControllerMappingLibrary.AXIS_15),
+            new MixedRealityInteractionMapping(9, "Button.PrimaryThumbstick Press", AxisType.Digital, DeviceInputType.ThumbStickPress, KeyCode.JoystickButton8),
+            new MixedRealityInteractionMapping(10, "Button.Three Press", AxisType.Digital, DeviceInputType.ButtonPress, KeyCode.JoystickButton2),
+            new MixedRealityInteractionMapping(11, "Button.Four Press", AxisType.Digital, DeviceInputType.ButtonPress, KeyCode.JoystickButton3),
+            new MixedRealityInteractionMapping(12, "Button.Start Press", AxisType.Digital, DeviceInputType.ButtonPress, KeyCode.JoystickButton6),
+            new MixedRealityInteractionMapping(13, "Button.Three Touch", AxisType.Digital, DeviceInputType.ButtonPress, KeyCode.JoystickButton12),
+            new MixedRealityInteractionMapping(14, "Button.Four Touch", AxisType.Digital, DeviceInputType.ButtonPress, KeyCode.JoystickButton13),
+            new MixedRealityInteractionMapping(15, "Touch.PrimaryThumbRest Touch", AxisType.Digital, DeviceInputType.ThumbTouch, KeyCode.JoystickButton18),
+            new MixedRealityInteractionMapping(16, "Touch.PrimaryThumbRest Near Touch", AxisType.Digital, DeviceInputType.ThumbNearTouch, ControllerMappingLibrary.AXIS_17),
+            //new MixedRealityInteractionMapping(17, "Index Finger Pose", AxisType.SixDof, DeviceInputType.IndexFinger,  new MixedRealityInputAction(13, "Index Finger Pose", AxisType.SixDof)),
         };
 
-        public override MixedRealityInteractionMapping[] DefaultLeftHandedInteractions => DefaultInteractions;
+        /// <inheritdoc />
+        public override MixedRealityInteractionMapping[] DefaultRightHandedInteractions => new[]
+        {
+            new MixedRealityInteractionMapping(0, "Spatial Pointer", AxisType.SixDof, DeviceInputType.SpatialPointer),
+            new MixedRealityInteractionMapping(1, "Axis1D.SecondaryIndexTrigger", AxisType.SingleAxis, DeviceInputType.Trigger, ControllerMappingLibrary.AXIS_10),
+            new MixedRealityInteractionMapping(2, "Axis1D.SecondaryIndexTrigger Touch", AxisType.Digital, DeviceInputType.TriggerTouch, KeyCode.JoystickButton15),
+            new MixedRealityInteractionMapping(3, "Axis1D.SecondaryIndexTrigger Near Touch", AxisType.Digital, DeviceInputType.TriggerNearTouch, ControllerMappingLibrary.AXIS_14),
+            new MixedRealityInteractionMapping(4, "Axis1D.SecondaryIndexTrigger Press", AxisType.Digital, DeviceInputType.TriggerPress, ControllerMappingLibrary.AXIS_10),
+            new MixedRealityInteractionMapping(5, "Axis1D.SecondaryHandTrigger Press", AxisType.SingleAxis, DeviceInputType.Trigger, ControllerMappingLibrary.AXIS_12),
+            new MixedRealityInteractionMapping(6, "Axis2D.SecondaryThumbstick", AxisType.DualAxis, DeviceInputType.ThumbStick, ControllerMappingLibrary.AXIS_4, ControllerMappingLibrary.AXIS_5),
+            new MixedRealityInteractionMapping(7, "Button.SecondaryThumbstick Touch", AxisType.Digital, DeviceInputType.ThumbStickTouch, KeyCode.JoystickButton17),
+            new MixedRealityInteractionMapping(8, "Button.SecondaryThumbstick Near Touch", AxisType.Digital, DeviceInputType.ThumbNearTouch, ControllerMappingLibrary.AXIS_16),
+            new MixedRealityInteractionMapping(9, "Button.SecondaryThumbstick Press", AxisType.Digital, DeviceInputType.ThumbStickPress, KeyCode.JoystickButton9),
+            new MixedRealityInteractionMapping(10, "Button.One Press", AxisType.Digital, DeviceInputType.ButtonPress, KeyCode.JoystickButton0),
+            new MixedRealityInteractionMapping(11, "Button.Two Press", AxisType.Digital, DeviceInputType.ButtonPress, KeyCode.JoystickButton1),
+            new MixedRealityInteractionMapping(12, "Button.One Touch", AxisType.Digital, DeviceInputType.ButtonPress, KeyCode.JoystickButton10),
+            new MixedRealityInteractionMapping(13, "Button.Two Touch", AxisType.Digital, DeviceInputType.ButtonPress, KeyCode.JoystickButton11),
+            new MixedRealityInteractionMapping(14, "Touch.SecondaryThumbRest Touch", AxisType.Digital, DeviceInputType.ThumbTouch, KeyCode.JoystickButton19),
+            new MixedRealityInteractionMapping(15, "Touch.SecondaryThumbRest Near Touch", AxisType.Digital, DeviceInputType.ThumbNearTouch, ControllerMappingLibrary.AXIS_18),
+            //new MixedRealityInteractionMapping(16, "Index Finger Pose", AxisType.SixDof, DeviceInputType.IndexFinger,  new MixedRealityInputAction(13, "Index Finger Pose", AxisType.SixDof)),
+        };
 
-        public override MixedRealityInteractionMapping[] DefaultRightHandedInteractions => DefaultInteractions;
+        //public override MixedRealityInteractionMapping[] DefaultLeftHandedInteractions => DefaultInteractions;
+
+        //public override MixedRealityInteractionMapping[] DefaultRightHandedInteractions => DefaultInteractions;
 
         public override void SetupDefaultInteractions(Handedness controllerHandedness)
         {
@@ -154,15 +200,18 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
             bool isTriggerPressed = false;
             bool isGripPressed = false;
+            Vector2 thumbStickInput = Vector2.zero;
             if (ControllerHandedness == Handedness.Left)
             {
                 isTriggerPressed = OVRInput.Get(OVRInput.RawAxis1D.LIndexTrigger) > cTriggerDeadZone;
                 isGripPressed = OVRInput.Get(OVRInput.RawAxis1D.LHandTrigger) > cTriggerDeadZone;
+                thumbStickInput = OVRInput.Get(OVRInput.RawAxis2D.LThumbstick);
             }
             else
             {
                 isTriggerPressed = OVRInput.Get(OVRInput.RawAxis1D.RIndexTrigger) > cTriggerDeadZone;
                 isGripPressed = OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger) > cTriggerDeadZone;
+                thumbStickInput = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick);
             }
 
             for (int i = 0; i < Interactions?.Length; i++)
@@ -173,15 +222,19 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                         Interactions[i].PoseData = currentPointerPose;
                         if (Interactions[i].Changed)
                         {
-                            CoreServices.InputSystem?.RaisePoseInputChanged(InputSource, ControllerHandedness, Interactions[i].MixedRealityInputAction, currentPointerPose);
+                            CoreServices.InputSystem?.RaisePoseInputChanged(InputSource, ControllerHandedness,
+                                Interactions[i].MixedRealityInputAction, currentPointerPose);
                         }
+
                         break;
                     case DeviceInputType.SpatialGrip:
                         Interactions[i].PoseData = currentGripPose;
                         if (Interactions[i].Changed)
                         {
-                            CoreServices.InputSystem?.RaisePoseInputChanged(InputSource, ControllerHandedness, Interactions[i].MixedRealityInputAction, currentGripPose);
+                            CoreServices.InputSystem?.RaisePoseInputChanged(InputSource, ControllerHandedness,
+                                Interactions[i].MixedRealityInputAction, currentGripPose);
                         }
+
                         break;
                     case DeviceInputType.Select:
                         Interactions[i].BoolData = isTriggerPressed || isGripPressed;
@@ -190,13 +243,16 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                         {
                             if (Interactions[i].BoolData)
                             {
-                                CoreServices.InputSystem?.RaiseOnInputDown(InputSource, ControllerHandedness, Interactions[i].MixedRealityInputAction);
+                                CoreServices.InputSystem?.RaiseOnInputDown(InputSource, ControllerHandedness,
+                                    Interactions[i].MixedRealityInputAction);
                             }
                             else
                             {
-                                CoreServices.InputSystem?.RaiseOnInputUp(InputSource, ControllerHandedness, Interactions[i].MixedRealityInputAction);
+                                CoreServices.InputSystem?.RaiseOnInputUp(InputSource, ControllerHandedness,
+                                    Interactions[i].MixedRealityInputAction);
                             }
                         }
+
                         break;
                     case DeviceInputType.TriggerPress:
                         Interactions[i].BoolData = isGripPressed || isTriggerPressed;
@@ -205,16 +261,27 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                         {
                             if (Interactions[i].BoolData)
                             {
-                                CoreServices.InputSystem?.RaiseOnInputDown(InputSource, ControllerHandedness, Interactions[i].MixedRealityInputAction);
+                                CoreServices.InputSystem?.RaiseOnInputDown(InputSource, ControllerHandedness,
+                                    Interactions[i].MixedRealityInputAction);
                             }
                             else
                             {
-                                CoreServices.InputSystem?.RaiseOnInputUp(InputSource, ControllerHandedness, Interactions[i].MixedRealityInputAction);
+                                CoreServices.InputSystem?.RaiseOnInputUp(InputSource, ControllerHandedness,
+                                    Interactions[i].MixedRealityInputAction);
                             }
                         }
+
                         break;
                     case DeviceInputType.IndexFinger:
                         UpdateIndexFingerData(Interactions[i]);
+                        break;
+
+                    case DeviceInputType.ThumbStick:
+                        Interactions[i].Vector2Data = thumbStickInput;
+                        if (Interactions[i].Changed)
+                        {
+                            CoreServices.InputSystem?.RaisePositionInputChanged(InputSource, ControllerHandedness, Interactions[i].MixedRealityInputAction, Interactions[i].Vector2Data);
+                        }
                         break;
                 }
             }

@@ -185,7 +185,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         /// <inheritdoc />
         public bool CheckCapability(MixedRealityCapability capability)
         {
-            return (capability == MixedRealityCapability.ArticulatedHand);
+            return  (capability == MixedRealityCapability.MotionController);
         }
 
         public override void Update()

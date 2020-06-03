@@ -31,6 +31,7 @@ using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit.Utilities;
 using System.Collections.Generic;
 using prvncher.MixedReality.Toolkit.Config;
+using prvncher.MixedReality.Toolkit.Input.Teleport;
 using UnityEngine;
 
 namespace prvncher.MixedReality.Toolkit.OculusQuestInput
@@ -43,8 +44,16 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
         private MixedRealityPose currentIndexPose = MixedRealityPose.ZeroIdentity;
         private MixedRealityPose currentGripPose = MixedRealityPose.ZeroIdentity;
 
+        /// <summary>
+        /// Teleport pointer reference. Needs custom pointer because MRTK does not support teleporting with articulated hands.
+        /// </summary>
+        public CustomTeleportPointer TeleportPointer { get; set; }
+
         private List<Renderer> handRenderers = new List<Renderer>();
         private Material handMaterial = null;
+
+        private bool isInPointingPose = true;
+        public override bool IsInPointingPose => isInPointingPose;
 
         #region AvatarHandReferences
         private GameObject handRoot = null;
@@ -103,6 +112,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
         public override MixedRealityInteractionMapping[] DefaultRightHandedInteractions => DefaultInteractions;
 
+        [System.Obsolete]
         public override void SetupDefaultInteractions(Handedness controllerHandedness)
         {
             AssignControllerMappings(DefaultInteractions);
@@ -152,18 +162,25 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
             // Todo: Complete touch controller mapping
 
-            bool isTriggerPressed = false;
-            bool isGripPressed = false;
+            bool isTriggerPressed;
+            bool isGripPressed;
+            Vector2 stickInput;
             if (ControllerHandedness == Handedness.Left)
             {
                 isTriggerPressed = OVRInput.Get(OVRInput.RawAxis1D.LIndexTrigger) > cTriggerDeadZone;
                 isGripPressed = OVRInput.Get(OVRInput.RawAxis1D.LHandTrigger) > cTriggerDeadZone;
+                stickInput = OVRInput.Get(OVRInput.RawAxis2D.LThumbstick);
             }
             else
             {
                 isTriggerPressed = OVRInput.Get(OVRInput.RawAxis1D.RIndexTrigger) > cTriggerDeadZone;
                 isGripPressed = OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger) > cTriggerDeadZone;
+                stickInput = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick);
             }
+
+            bool isSelecting = isTriggerPressed || isGripPressed;
+
+            UpdateCustomTeleportPointer(stickInput, worldPosition, worldRotation);
 
             for (int i = 0; i < Interactions?.Length; i++)
             {
@@ -184,7 +201,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                         }
                         break;
                     case DeviceInputType.Select:
-                        Interactions[i].BoolData = isTriggerPressed || isGripPressed;
+                        Interactions[i].BoolData = isSelecting;
 
                         if (Interactions[i].Changed)
                         {
@@ -199,7 +216,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                         }
                         break;
                     case DeviceInputType.TriggerPress:
-                        Interactions[i].BoolData = isGripPressed || isTriggerPressed;
+                        Interactions[i].BoolData = isSelecting;
 
                         if (Interactions[i].Changed)
                         {
@@ -220,6 +237,32 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             }
         }
 
+        private void UpdateCustomTeleportPointer(Vector2 stickInput, Vector3 worldPosition, Quaternion worldRotation)
+        {
+            if (TeleportPointer == null) return;
+
+            // Check if we're focus locked or near something interactive to avoid teleporting unintentionally.
+            bool anyPointersLockedWithHand = false;
+            for (int i = 0; i < InputSource?.Pointers?.Length; i++)
+            {
+                if (InputSource.Pointers[i] == null) continue;
+                if (InputSource.Pointers[i] is IMixedRealityNearPointer)
+                {
+                    var nearPointer = (IMixedRealityNearPointer)InputSource.Pointers[i];
+                    anyPointersLockedWithHand |= nearPointer.IsNearObject;
+                }
+                anyPointersLockedWithHand |= InputSource.Pointers[i].IsFocusLocked;
+            }
+
+            bool pressingStick = !anyPointersLockedWithHand && stickInput != Vector2.zero;
+            isInPointingPose = !pressingStick;
+
+            TeleportPointer.gameObject.SetActive(IsPositionAvailable);
+            TeleportPointer.transform.position = worldPosition;
+            TeleportPointer.transform.rotation = worldRotation;
+            TeleportPointer.UpdatePointer(pressingStick, stickInput);
+        }
+
         /// <summary>
         /// Updates material instance used for avatar hands.
         /// </summary>
@@ -236,6 +279,9 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             ApplyHandMaterial();
         }
 
+        /// <summary>
+        /// Updates hand material set on hand renderers with member variable stored on controller.
+        /// </summary>
         public void ApplyHandMaterial()
         {
             foreach (var handRenderer in handRenderers)

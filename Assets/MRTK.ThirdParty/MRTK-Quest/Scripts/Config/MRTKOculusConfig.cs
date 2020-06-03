@@ -1,4 +1,4 @@
-﻿//------------------------------------------------------------------------------ -
+//------------------------------------------------------------------------------ -
 //MRTK - Quest
 //https ://github.com/provencher/MRTK-Quest
 //------------------------------------------------------------------------------ -
@@ -55,6 +55,7 @@ namespace prvncher.MixedReality.Toolkit.Config
                 return instance;
             }
         }
+
         [Header("Config")]
         [SerializeField]
         [Tooltip("Using avatar hands requires a local avatar prefab. Failure to provide one will result in nothing being displayed. \n\n" +
@@ -89,6 +90,16 @@ namespace prvncher.MixedReality.Toolkit.Config
         [Tooltip("Prefab reference for LocalAvatar to load, if none are found in scene.")]
         private GameObject localAvatarPrefab = null;
 
+        [Header("Pointer Configuration")]
+        [SerializeField]
+        [Tooltip("Custom teleport pointer prefab, to be managed directly by MRTK-Quest, given that MRTK doesn't currently support teleport with articulated hands.")]
+        private GameObject customTeleportPointerPrefab = null;
+
+        /// <summary>
+        /// Custom teleport pointer prefab, to be managed directly by MRTK-Quest, given that MRTK doesn't currently support teleport with articulated hands.
+        /// </summary>
+        public GameObject CustomTeleportPrefab => customTeleportPointerPrefab;
+
         /// <summary>
         /// Prefab reference for LocalAvatar to load, if none are found in scene.
         /// </summary>
@@ -111,7 +122,7 @@ namespace prvncher.MixedReality.Toolkit.Config
         /// <summary>
         /// Event triggered when the custom material for hand mesh is updated.
         /// </summary>
-        public System.Action OnCustomHandMaterialUpdate;
+        public static System.Action OnCustomHandMaterialUpdate;
 
         /// <summary>
         /// Custom hand material to use for hand tracking hand mesh.

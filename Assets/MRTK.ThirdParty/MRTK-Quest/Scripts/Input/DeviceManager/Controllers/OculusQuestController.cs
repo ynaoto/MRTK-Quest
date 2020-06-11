@@ -180,7 +180,7 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
 
             bool isSelecting = isTriggerPressed || isGripPressed;
 
-            UpdateCustomTeleportPointer(stickInput, worldPosition, worldRotation);
+            UpdateTeleport(stickInput);
 
             for (int i = 0; i < Interactions?.Length; i++)
             {
@@ -237,9 +237,11 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
             }
         }
 
-        private void UpdateCustomTeleportPointer(Vector2 stickInput, Vector3 worldPosition, Quaternion worldRotation)
+        private void UpdateTeleport(Vector2 stickInput)
         {
-            if (TeleportPointer == null) return;
+            if(MRTKOculusConfig.Instance.ActiveTeleportPointerMode == MRTKOculusConfig.TeleportPointerMode.None) return;
+
+            MixedRealityInputAction teleportAction = MixedRealityInputAction.None;
 
             // Check if we're focus locked or near something interactive to avoid teleporting unintentionally.
             bool anyPointersLockedWithHand = false;
@@ -252,16 +254,39 @@ namespace prvncher.MixedReality.Toolkit.OculusQuestInput
                     anyPointersLockedWithHand |= nearPointer.IsNearObject;
                 }
                 anyPointersLockedWithHand |= InputSource.Pointers[i].IsFocusLocked;
+
+                if (InputSource.Pointers[i] is IMixedRealityTeleportPointer)
+                {
+                    teleportAction = ((Microsoft.MixedReality.Toolkit.Teleport.TeleportPointer)InputSource.Pointers[i]).TeleportInputAction;
+                }
             }
 
-            bool pressingStick = !anyPointersLockedWithHand && stickInput != Vector2.zero;
-            isInPointingPose = !pressingStick;
+            bool isReadyForTeleport = !anyPointersLockedWithHand && stickInput != Vector2.zero;
+            isInPointingPose = !isReadyForTeleport;
 
-            TeleportPointer.gameObject.SetActive(IsPositionAvailable);
-            TeleportPointer.transform.position = worldPosition;
-            TeleportPointer.transform.rotation = worldRotation;
-            TeleportPointer.UpdatePointer(pressingStick, stickInput);
+            RaiseTeleportInput(isInPointingPose ? Vector2.zero : stickInput, teleportAction, isReadyForTeleport);
         }
+
+        private void RaiseTeleportInput(Vector2 teleportInput, MixedRealityInputAction teleportAction, bool isReadyForTeleport)
+        {
+            switch (MRTKOculusConfig.Instance.ActiveTeleportPointerMode)
+            {
+                case MRTKOculusConfig.TeleportPointerMode.Custom:
+                    if (TeleportPointer == null) return;
+                    TeleportPointer.gameObject.SetActive(isReadyForTeleport);
+                    TeleportPointer.transform.position = currentPointerPose.Position;
+                    TeleportPointer.transform.rotation = currentPointerPose.Rotation;
+                    TeleportPointer.UpdatePointer(isReadyForTeleport, teleportInput);
+                    break;
+                case MRTKOculusConfig.TeleportPointerMode.Official:
+                    if (teleportAction.Equals(MixedRealityInputAction.None)) return;
+                    CoreServices.InputSystem?.RaisePositionInputChanged(InputSource, ControllerHandedness, teleportAction, teleportInput);
+                    break;
+                default:
+                    return;
+            }
+        }
+
 
         /// <summary>
         /// Updates material instance used for avatar hands.

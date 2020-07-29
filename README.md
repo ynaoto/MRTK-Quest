@@ -15,8 +15,8 @@ It was built to showcase the hand-driven interaction model designed by Microsoft
 Check out [@Dilmerv](https://twitter.com/Dilmerv)'s awesome tutorial [video](https://youtu.be/rHQvQVHYMHw).
 
 # Supported versions
-- Unity 2019.4.0f1
-- Oculus Integration 17.0
+- Unity 2019.4.0f1+ LTS
+- [Oculus Integration 17.0](https://developer.oculus.com/downloads/package/unity-integration/)
 - Mixed Reality Toolkit v2.4.0+
 
 # Supported target devices
@@ -101,7 +101,7 @@ If you wish to use MRTK as a library, and wait for official releases, this is th
     Simply move onto step 3 if your project has MRTK configured this way.
 
 ## 3. Import Oculus Integration
-Download [Oculus Integration 17.0](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022) from Asset Store and import it.
+Download [Oculus Integration 17.0](https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022) from Asset Store or the [Oculus Archive](https://developer.oculus.com/downloads/package/unity-integration/) and import it.
 - Alternatively just drag and drop the Oculus folder into Assets/
 
 ## 4. Project Configuration Window

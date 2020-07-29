@@ -11,6 +11,9 @@ It was built to showcase the hand-driven interaction model designed by Microsoft
 ## Demo Video
 [![Demo video](https://user-images.githubusercontent.com/7420990/83885080-dcde6100-a713-11ea-88e2-46883402cfe8.gif)](https://twitter.com/prvncher/status/1268901965175668736)
 
+## Tutorial Video
+Check out [@Dilmerv](https://twitter.com/Dilmerv)'s awesome tutorial [video](https://youtu.be/rHQvQVHYMHw).
+
 # Supported versions
 - Unity 2019.4.0f1
 - Oculus Integration 17.0

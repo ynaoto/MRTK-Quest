@@ -2,6 +2,8 @@
 MRTK-Quest is a Mixed Reality Toolkit (MRTK) extension for Oculus Quest, now with support for Rift/Rift S as well.
 It was built to showcase the hand-driven interaction model designed by Microsoft for HoloLens 2, on the Oculus ecosystem.
 
+** As of [MRTK 2.5](https://microsoft.github.io/MixedRealityToolkit-Unity/version/releases/2.5.0/Documentation/ReleaseNotes.html), Oculus platforms are officially supported, leveraging the code that powers MRTK-Quest. Going forward, Microsoft will be maintaining Oculus support, and as such this repository will be archived.**
+
 ## Main features
 - Full support for articulated hand tracking, and simulated hand tracking using controllers with avatar hands.
 - Support for Oculus Link on Quest with controllers, which means rapid iteration without builds.
